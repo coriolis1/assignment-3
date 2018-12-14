@@ -1,0 +1,49 @@
+---
+title: "assignment-3"
+author: "Pasquet Marc"
+date: "12/14/2018"
+output: html_document
+---
+
+```{r}
+source("fonctions-3.R")
+```
+
+
+```{r}
+library(devtools)
+
+library(dplyr)
+
+devtools::install_github("ewan/stats_course", subdir="data/clark_judgments", force = TRUE)
+
+MOP100 <- dplyr::filter(clarkjudgments::acceptability, MOP == "MOP100")
+```
+
+
+# EX 1
+
+
+```{r}
+histo_MOP100 <- ggplot2::ggplot(MOP100, ggplot2::aes(x = language, y = rating)) + ggplot2::geom_point(position = "jitter", alpha=0.5, ymin = 0, ymax=100)
+  
+histo_MOP100
+
+```
+
+L'observation de l'histogramme montre que les observations se répartissent selon une tendance nette ; les phrases grammaticalement correctes ("good") ont presque toutes un taux d'acceptabilité avoisiant 100 tandis que les phrases agrammaticales ("bad") se répartissent majoritairement autour de O. Pour autant cette répartition n'est pas absolue car pour chaque catégorie ("bad" or "good") on peut trouver des taux d'acceptabilité compris entre 0 et 100. On remarque enfin que d'après l'histogramme la catégorie "bad" semble avoir un taux de dispersion légèrement supérieure.
+
+Ces données sont innapropriées pour une régression linéaire, notamment du fait que les données de la variables "rating" n'excèdent jamais l'intervalle O-100.Les observations ne correspondent pas à une distribution normale puisqu'elles se siuent principalement aux minimum et maximimum de l'échelle (0 et 100).
+
+# EX 2
+
+
+```{r}
+good <- dplyr::filter(MOP100, language=="adger-good") 
+
+bad <- dplyr::filter(MOP100, language=="adger-bad") 
+
+resume_good <- dplyr::summarise(good, total=n(), mean=mean(rating), sd=sd(rating)) 
+
+resume_bad<- dplyr::summarise(bad, total=n(), mean=mean(rating), sd=sd(rating))
+```
